@@ -12,7 +12,7 @@ public sealed class VenueAvailabilitySpec
         return activeEvents
             .Where(e => e.VenueId == venueId)
             .Where(e => excludeEventId == null || e.Id != excludeEventId)
-            .Where(e => e.Estado == EventStatus.Active)
+            .Where(e => e.Status == EventStatus.Active)
             .Any(e => start < e.EndDateTime && end > e.StartDateTime);
     }
 }
