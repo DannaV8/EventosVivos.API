@@ -62,7 +62,7 @@ PUT   /api/reservations/{id}/cancel        → CancelReservationCommand   → 20
 ## Auth
 
 All endpoints require JWT Bearer except `GET /api/events` (public).
-Admin-only endpoints use `[Authorize(Policy = "AdminOnly")]` which requires claim `rol: admin`.
+Admin-only endpoints use `[Authorize(Policy = "AdminOnly")]` which requires claim `role: admin`.
 
 ---
 

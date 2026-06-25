@@ -49,7 +49,7 @@ Never remove this — it's the only thing preventing overselling under concurren
 
 **Venues are seeded reference data** in `AppDbContext.OnModelCreating` — they are never created from user actions.
 
-**JWT claims**: `sub` (userId), `email`, `rol` (`admin` | `user`). Read by `JwtService` from `IConfiguration` keys `Jwt:Key`, `Jwt:Issuer`, `Jwt:ExpiresInMinutes`.
+**JWT claims**: `sub` (userId), `email`, `role` (`admin` | `user`). Read by `JwtService` from `IConfiguration` keys `Jwt:Key`, `Jwt:Issuer`, `Jwt:ExpiresInMinutes`.
 
 ---
 

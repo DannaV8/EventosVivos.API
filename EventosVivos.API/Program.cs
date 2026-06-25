@@ -61,7 +61,7 @@ try
         });
 
     builder.Services.AddAuthorization(opt =>
-        opt.AddPolicy("AdminOnly", p => p.RequireClaim("rol", "admin")));
+        opt.AddPolicy("AdminOnly", p => p.RequireRole("admin")));
 
     // 4. CORS — permite que la UI (otro origen) consuma la API en desarrollo
     builder.Services.AddCors(opt =>

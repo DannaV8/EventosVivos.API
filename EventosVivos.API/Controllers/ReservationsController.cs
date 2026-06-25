@@ -23,7 +23,7 @@ public sealed class ReservationsController : ControllerBase
     public async Task<IActionResult> List(CancellationToken ct)
     {
         var userId = GetUserId();
-        var isAdmin = User.HasClaim("rol", "admin");
+        var isAdmin = User.IsInRole("admin");
         var result = await _mediator.Send(new ListReservationsQuery(userId, isAdmin), ct);
         return Ok(result);
     }
@@ -49,12 +49,14 @@ public sealed class ReservationsController : ControllerBase
     public async Task<IActionResult> Cancel(Guid id, CancellationToken ct)
     {
         var userId = GetUserId();
-        var isAdmin = User.HasClaim("rol", "admin");
+        var isAdmin = User.IsInRole("admin");
         await _mediator.Send(new CancelReservationCommand(id, userId, isAdmin), ct);
         return Ok();
     }
 
     private Guid GetUserId() =>
-        Guid.Parse(User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+        Guid.Parse(
+            User.FindFirstValue(JwtRegisteredClaimNames.Sub)
+            ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? throw new InvalidOperationException("Token sin claim 'sub'."));
 }
