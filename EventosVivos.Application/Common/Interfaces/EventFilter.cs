@@ -8,5 +8,7 @@ public sealed record EventFilter(
     DateTime? EndDate = null,
     int? VenueId = null,
     EventStatus? Status = null,
-    string? Title = null
+    string? Title = null,
+    int Page = 1,
+    int PageSize = 9
 );

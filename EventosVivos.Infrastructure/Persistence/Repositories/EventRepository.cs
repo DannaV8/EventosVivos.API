@@ -1,4 +1,5 @@
 using EventosVivos.Application.Common.Interfaces;
+using EventosVivos.Application.Common.Models;
 using EventosVivos.Domain.Entities;
 using EventosVivos.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,7 @@ public sealed class EventRepository : IEventRepository
             .FirstOrDefaultAsync(e => e.Id == id, ct);
     }
 
-    public async Task<IReadOnlyList<Event>> ListAsync(EventFilter filter, CancellationToken ct = default)
+    public async Task<PagedResult<Event>> ListAsync(EventFilter filter, CancellationToken ct = default)
     {
         IQueryable<Event> query = _db.Events.Include(e => e.Venue);
 
@@ -40,13 +41,37 @@ public sealed class EventRepository : IEventRepository
         if (!string.IsNullOrWhiteSpace(filter.Title))
             query = query.Where(e => EF.Functions.ILike(e.Title, $"%{filter.Title}%"));
 
-        var events = await query.ToListAsync(ct);
+        // Stable ordering is required for deterministic pagination.
+        query = query.OrderBy(e => e.StartDateTime);
 
+        var page = filter.Page < 1 ? 1 : filter.Page;
+        var pageSize = filter.PageSize < 1 ? 9 : filter.PageSize;
+
+        // Event.Status is computed (not a DB column), so when filtering by status
+        // we must materialize first, then filter and paginate in memory.
         if (filter.Status is not null)
-            events = events.Where(e => e.Status == filter.Status).ToList();
+        {
+            var all = await query.ToListAsync(ct);
+            var filtered = all.Where(e => e.Status == filter.Status).ToList();
 
-        _logger.LogDebug("ListAsync returned {Count} events", events.Count);
-        return events;
+            var pageItems = filtered
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            _logger.LogDebug("ListAsync (status filter) returned {Count}/{Total}", pageItems.Count, filtered.Count);
+            return new PagedResult<Event>(pageItems, filtered.Count, page, pageSize);
+        }
+
+        // No status filter → true DB-level pagination (efficient).
+        var totalCount = await query.CountAsync(ct);
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(ct);
+
+        _logger.LogDebug("ListAsync returned {Count}/{Total}", items.Count, totalCount);
+        return new PagedResult<Event>(items, totalCount, page, pageSize);
     }
 
     public async Task<IReadOnlyList<Event>> GetActiveByVenueAsync(int venueId, CancellationToken ct = default)

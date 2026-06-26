@@ -1,17 +1,18 @@
 using EventosVivos.Application.Common.Interfaces;
+using EventosVivos.Application.Common.Models;
 using EventosVivos.Application.Models.Events;
 using MediatR;
 
 namespace EventosVivos.Application.Handlers.Events;
 
 public sealed class ListEventsHandler
-    : IRequestHandler<ListEventsQuery, IReadOnlyList<EventDto>>
+    : IRequestHandler<ListEventsQuery, PagedResult<EventDto>>
 {
     private readonly IEventRepository _events;
 
     public ListEventsHandler(IEventRepository events) => _events = events;
 
-    public async Task<IReadOnlyList<EventDto>> Handle(
+    public async Task<PagedResult<EventDto>> Handle(
         ListEventsQuery query, CancellationToken ct)
     {
         var filter = new EventFilter(
@@ -20,11 +21,13 @@ public sealed class ListEventsHandler
             EndDate: query.EndDate,
             VenueId: query.VenueId,
             Status: query.Status,
-            Title: query.Title);
+            Title: query.Title,
+            Page: query.Page,
+            PageSize: query.PageSize);
 
-        var events = await _events.ListAsync(filter, ct);
+        var result = await _events.ListAsync(filter, ct);
 
-        return events
+        var items = result.Items
             .Select(e => new EventDto(
                 e.Id,
                 e.Title,
@@ -38,5 +41,7 @@ public sealed class ListEventsHandler
                 e.Type.ToString(),
                 e.Status.ToString()))
             .ToList();
+
+        return new PagedResult<EventDto>(items, result.TotalCount, result.Page, result.PageSize);
     }
 }
