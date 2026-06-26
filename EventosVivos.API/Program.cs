@@ -57,7 +57,7 @@ try
         });
 
     builder.Services.AddAuthorization(opt =>
-        opt.AddPolicy("AdminOnly", p => p.RequireClaim("role", "admin")));
+        opt.AddPolicy("AdminOnly", p => p.RequireClaim("rol", "admin")));
 
     builder.Services.AddCors(opt =>
         opt.AddPolicy("DevCors", p => p
@@ -153,11 +153,8 @@ try
 
     app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+    app.UseSwagger();
+    app.UseSwaggerUI();
 
     app.UseCors("DevCors");
     app.UseRateLimiter();
