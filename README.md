@@ -118,3 +118,7 @@ dotnet test
 
 - **Diagrama de usuario:**
 <img width="623" height="641" alt="Eventos vivos-User Diagram drawio" src="https://github.com/user-attachments/assets/3aa7f1c7-2924-4640-9a7f-d101ddd01b71" />
+
+## Unit test
+<img width="458" height="406" alt="image" src="https://github.com/user-attachments/assets/61b5d3ed-dfd4-47e7-88cd-ec433f5b1ef0" />
+
