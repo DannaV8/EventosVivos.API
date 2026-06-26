@@ -1,3 +1,7 @@
+URL: https://eventosvivos-api-q5jw.onrender.com/swagger/index.html
+
+<img width="751" height="468" alt="image" src="https://github.com/user-attachments/assets/b96d005b-ba55-4dec-9110-90dc71ce7fd5" />
+
 # EventosVivos API
 
 API REST para reserva de eventos culturales. El núcleo del problema es el **control de aforo
