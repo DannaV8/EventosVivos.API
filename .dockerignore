@@ -1,8 +1,7 @@
 **/bin/
 **/obj/
-**/.git/
+.git/
 **/logs/
-**/.vs/
-**/.editorconfig
-**/Directory.Build.props
-**/Directory.Packages.props
+.gitignore/
+*.md
+tests/
