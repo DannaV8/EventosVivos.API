@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="EventosVivos.API/EventosVivos.API.csproj" />
+    <Project Path="EventosVivos.Application/EventosVivos.Application.csproj" />
+    <Project Path="EventosVivos.Domain/EventosVivos.Domain.csproj" />
+    <Project Path="EventosVivos.Infrastructure/EventosVivos.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="tests/EventosVivos.Domain.Tests/EventosVivos.Domain.Tests.csproj" />
+    <Project Path="tests/EventosVivos.Application.Tests/EventosVivos.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path=".editorconfig" />
+  </Folder>
+</Solution>
