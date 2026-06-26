@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: eventosvivos-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: eventosvivos
+      POSTGRES_USER: eventosvivos
+      POSTGRES_PASSWORD: eventosvivos-secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eventosvivos -d eventosvivos"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: EventosVivos.API/Dockerfile
+    container_name: eventosvivos-api
+    restart: unless-stopped
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: host
+      Jwt__Key: "key"
+      Jwt__Issuer: EventosVivos.API
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
