@@ -1,10 +1,13 @@
+using System.Text.RegularExpressions;
 using EventosVivos.Domain.Exceptions;
-using System.Data;
 
 namespace EventosVivos.Domain.Entities;
 
 public sealed class User
 {
+    private static readonly Regex EmailPattern = new(
+        @"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
+
     // Valid system roles. The "AdminOnly" policy depends on "admin".
     public static readonly string[] ValidRoles = ["admin", "user"];
 
@@ -18,17 +21,17 @@ public sealed class User
 
     public static User Create(string email, string passwordHash, string role)
     {
-        if (string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrWhiteSpace(email) || !EmailPattern.IsMatch(email))
             throw new InvalidUserException("INVALID_EMAIL",
-                "El email es obligatorio.");
+                "A valid email is required.");
 
         if (string.IsNullOrWhiteSpace(passwordHash))
             throw new InvalidUserException("INVALID_PASSWORD_HASH",
-                "El hash de la contraseña es obligatorio.");
+                "Password hash is required.");
 
         if (!ValidRoles.Contains(role))
             throw new InvalidUserException("INVALID_ROLE",
-                "El rol debe ser 'admin' o 'user'.");
+                "Role must be 'admin' or 'user'.");
 
         return new User
         {

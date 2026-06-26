@@ -192,21 +192,21 @@ namespace EventosVivos.Infrastructure.Migrations
                             Id = 1,
                             Capacity = 200,
                             City = "Bogotá",
-                            Name = "Auditorio Central"
+                            Name = "Central Auditorium"
                         },
                         new
                         {
                             Id = 2,
                             Capacity = 50,
                             City = "Bogotá",
-                            Name = "Sala Norte"
+                            Name = "North Hall"
                         },
                         new
                         {
                             Id = 3,
                             Capacity = 500,
                             City = "Medellín",
-                            Name = "Arena Sur"
+                            Name = "South Arena"
                         });
                 });
 

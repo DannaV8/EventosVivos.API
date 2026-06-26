@@ -1,9 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using EventosVivos.Application.Reservations.Commands.CancelReservation;
-using EventosVivos.Application.Reservations.Commands.ConfirmPayment;
-using EventosVivos.Application.Reservations.Commands.CreateReservation;
-using EventosVivos.Application.Reservations.Queries.ListReservations;
+using EventosVivos.Application.Models.Reservations;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

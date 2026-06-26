@@ -29,21 +29,44 @@ EventosVivos.Application/
 │       ├── IVenueRepository.cs
 │       ├── ITokenGenerator.cs
 │       └── IUnitOfWork.cs
-├── Auth/
-│   └── Commands/
-│       ├── Login/
-│       └── RegisterUser/
-├── Events/
-│   ├── Commands/CreateEvent/
-│   └── Queries/ListEvents/
-├── Reservations/
-│   ├── Commands/
-│   │   ├── CreateReservation/
-│   │   ├── ConfirmPayment/
-│   │   └── CancelReservation/
-│   └── Queries/ListReservations/
-└── Reports/
-    └── Queries/EventOccupancy/
+├── Handlers/                           ← one file per use case
+│   ├── Auth/
+│   │   ├── LoginHandler.cs
+│   │   └── RegisterUserHandler.cs
+│   ├── Events/
+│   │   ├── CreateEventHandler.cs
+│   │   └── ListEventsHandler.cs
+│   ├── Reports/
+│   │   └── EventOccupancyHandler.cs
+│   └── Reservations/
+│       ├── CancelReservationHandler.cs
+│       ├── ConfirmPaymentHandler.cs
+│       ├── CreateReservationHandler.cs
+│       └── ListReservationsHandler.cs
+├── Models/                             ← commands, queries, DTOs, validators
+│   ├── Auth/
+│   │   ├── LoginCommand.cs
+│   │   ├── LoginValidator.cs
+│   │   ├── RegisterUserCommand.cs
+│   │   └── RegisterUserValidator.cs
+│   ├── Events/
+│   │   ├── CreateEventCommand.cs
+│   │   ├── CreateEventValidator.cs
+│   │   ├── EventDto.cs
+│   │   └── ListEventsQuery.cs
+│   ├── Reports/
+│   │   ├── EventOccupancyDto.cs
+│   │   └── EventOccupancyQuery.cs
+│   └── Reservations/
+│       ├── CancelReservationCommand.cs
+│       ├── ConfirmPaymentCommand.cs
+│       ├── CreateReservationCommand.cs
+│       ├── CreateReservationValidator.cs
+│       ├── ListReservationsQuery.cs
+│       └── ReservationDto.cs
+├── CLAUDE.md
+├── DependencyInjection.cs
+└── EventosVivos.Application.csproj
 ```
 
 ---
@@ -69,4 +92,4 @@ They validate shape and format only — business rules (capacity, timing, limits
 - No domain exceptions swallowed silently — let them propagate to middleware
 - Always `DateTime.UtcNow`, never `DateTime.Now`
 - Queries return DTOs, never domain entities
-- User-facing error messages stay in Spanish; all identifiers and comments in English
+- All user-facing error messages in English; all identifiers and comments in English

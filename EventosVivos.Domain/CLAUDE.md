@@ -52,9 +52,15 @@ Only `_cancelled` (bool) is stored. `Completed` is always derived from `EndDateT
 **Specifications never throw** — they return a result tuple `(bool isValid, string? code, string? message)`.
 The caller (handler or service) decides whether to throw based on the result.
 
-**ReservationValidationService** orchestrates capacity and transaction-limit specs in the correct priority order (see root CLAUDE.md RF-03 section).
+**ReservationValidationService** orchestrates capacity and transaction-limit specs plus quantity validation in the correct priority order per RF-03 (see root CLAUDE.md RF-03 section). The `quantity < 1` check is the last priority, evaluated only after capacity and transaction limits pass. The service is synchronous — it receives a pre-loaded `Event` (with reservations) and the requested quantity, and throws the first applicable `DomainException`.
 
-**Entities cannot be constructed in an invalid state** — use static factory methods, never public constructors.
+**Entities cannot be constructed in an invalid state** — use static factory methods (`Event.Create`, `Reservation.Create`, `User.Create`) with inline validation, never public constructors.
+
+**Inline validations in factory methods** (no Value Objects, no EF converters needed):
+- `Event.Create` — throws if `price < 0`
+- `Reservation.Create` — validates `buyerEmail` against `^[^@\s]+@[^@\s]+\.[^@\s]+$`
+- `Reservation.ConfirmPayment` — validates code against `^EV-\d{6}$`
+- `User.Create` — validates `email` against `^[^@\s]+@[^@\s]+\.[^@\s]+$`
 
 ---
 
@@ -66,5 +72,5 @@ The caller (handler or service) decides whether to throw based on the result.
 - No DTOs or ViewModels
 - No `[Required]`, `[MaxLength]` or data annotation attributes
 - Always `DateTime.UtcNow`, never `DateTime.Now`
-- User-facing error messages (exception messages) stay in Spanish
+- All user-facing error messages (exception messages) in English
 - All other code (identifiers, comments) in English

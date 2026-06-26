@@ -49,15 +49,6 @@ public class ReservationTransactionLimitSpecTests
     private readonly ReservationTransactionLimitSpec _spec = new();
 
     [Fact]
-    public void Evaluate_ZeroQuantity_IsInvalid()
-    {
-        var (isValid, code, _) = _spec.Evaluate(0, 50m, DateTime.UtcNow.AddDays(10));
-
-        Assert.False(isValid);
-        Assert.Equal("INVALID_QUANTITY", code);
-    }
-
-    [Fact]
     public void Evaluate_LessThan24h_MoreThan5_IsInvalid()
     {
         var (isValid, code, _) = _spec.Evaluate(6, 50m, DateTime.UtcNow.AddHours(12));
@@ -115,7 +106,7 @@ public class VenueAvailabilitySpecTests
     {
         var start = TestData.NextWeekday(18);
         var existing = Domain.Entities.Event.Create(
-            "Existente", "Evento que ya ocupa el venue.", TestData.Venue(),
+            "Existing Event", "Event that already occupies the venue.", TestData.Venue(),
             100, start, start.AddHours(3), 50m, EventType.Concert);
 
         var hasConflict = _spec.HasConflict(
@@ -130,7 +121,7 @@ public class VenueAvailabilitySpecTests
     {
         var start = TestData.NextWeekday(18);
         var existing = Domain.Entities.Event.Create(
-            "Existente", "Evento que ya ocupa el venue.", TestData.Venue(),
+            "Existing Event", "Event that already occupies the venue.", TestData.Venue(),
             100, start, start.AddHours(3), 50m, EventType.Concert);
 
         var hasConflict = _spec.HasConflict(
@@ -145,7 +136,7 @@ public class VenueAvailabilitySpecTests
     {
         var start = TestData.NextWeekday(18);
         var existing = Domain.Entities.Event.Create(
-            "Existente", "Evento que ya ocupa el venue.", TestData.Venue(),
+            "Existing Event", "Event that already occupies the venue.", TestData.Venue(),
             100, start, start.AddHours(3), 50m, EventType.Concert);
 
         var hasConflict = _spec.HasConflict(
@@ -160,7 +151,7 @@ public class VenueAvailabilitySpecTests
     {
         var start = TestData.NextWeekday(18);
         var existing = Domain.Entities.Event.Create(
-            "Existente", "Evento que ya ocupa el venue.", TestData.Venue(),
+            "Existing Event", "Event that already occupies the venue.", TestData.Venue(),
             100, start, start.AddHours(3), 50m, EventType.Concert);
         existing.Cancel();
 
@@ -176,7 +167,7 @@ public class VenueAvailabilitySpecTests
     {
         var start = TestData.NextWeekday(18);
         var existing = Domain.Entities.Event.Create(
-            "Existente", "Evento que ya ocupa el venue.", TestData.Venue(),
+            "Existing Event", "Event that already occupies the venue.", TestData.Venue(),
             100, start, start.AddHours(3), 50m, EventType.Concert);
 
         var hasConflict = _spec.HasConflict(

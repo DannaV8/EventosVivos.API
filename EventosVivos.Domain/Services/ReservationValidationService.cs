@@ -1,3 +1,4 @@
+using EventosVivos.Domain.Enums;
 using EventosVivos.Domain.Exceptions;
 using EventosVivos.Domain.Specifications;
 
@@ -9,6 +10,7 @@ public sealed class ReservationValidationService
     private readonly ReservationTransactionLimitSpec _limitSpec = new();
 
     public void Validate(
+        EventStatus eventStatus,
         int quantity,
         decimal ticketPrice,
         DateTime eventStart,
@@ -16,6 +18,10 @@ public sealed class ReservationValidationService
         int confirmedTickets,
         int lostTickets)
     {
+        if (eventStatus != EventStatus.Active)
+            throw new InvalidEventException("EVENT_NOT_ACTIVE",
+                "Reservations can only be created for active events.");
+
         if ((eventStart - DateTime.UtcNow).TotalHours < 1)
             throw new EventSoonException();
 
@@ -31,5 +37,9 @@ public sealed class ReservationValidationService
             quantity, ticketPrice, eventStart);
         if (!isLimitValid)
             throw new InvalidEventException(errorCode!, errorMessage!);
+
+        if (quantity < 1)
+            throw new InvalidEventException("INVALID_QUANTITY",
+                "Quantity must be at least 1.");
     }
 }

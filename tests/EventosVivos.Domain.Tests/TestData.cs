@@ -7,7 +7,7 @@ namespace EventosVivos.Domain.Tests;
 internal static class TestData
 {
     public static Venue Venue(int capacity = 200) =>
-        new() { Id = 1, Name = "Auditorio Central", Capacity = capacity, City = "Bogotá" };
+        new() { Id = 1, Name = "Main Auditorium", Capacity = capacity, City = "Bogotá" };
 
     public static DateTime NextWeekday(int hour = 18)
     {
@@ -32,7 +32,7 @@ internal static class TestData
         venue ??= Venue();
         var start = NextWeekday(18);
         return Event.Create(
-            "Concierto de Jazz", "Una noche inolvidable de jazz en vivo.",
+            "Jazz Concert", "An unforgettable night of live jazz.",
             venue, capacity, start, start.AddHours(3), price, type);
     }
 

@@ -36,19 +36,6 @@ public sealed class ReservationRepository : IReservationRepository
             .Where(r => r.EventId == eventId && r.IsLost)
             .SumAsync(r => r.Quantity, ct);
 
-    public async Task<decimal> SumRevenueAsync(Guid eventId, CancellationToken ct = default)
-    {
-        var ev = await _db.Events.FindAsync([eventId], ct);
-        if (ev is null)
-        {
-            _logger.LogWarning("SumRevenue: event {EventId} not found, returning 0", eventId);
-            return 0m;
-        }
-
-        var confirmed = await CountConfirmedAsync(eventId, ct);
-        return ev.TicketPrice * confirmed;
-    }
-
     public async Task<IReadOnlyList<Reservation>> ListByUserAsync(Guid userId, CancellationToken ct = default)
     {
         _logger.LogDebug("Listing reservations for user={UserId}", userId);

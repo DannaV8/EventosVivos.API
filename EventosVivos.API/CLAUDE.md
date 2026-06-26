@@ -62,7 +62,9 @@ PUT   /api/reservations/{id}/cancel        → CancelReservationCommand   → 20
 ## Auth
 
 All endpoints require JWT Bearer except `GET /api/events` (public).
-Admin-only endpoints use `[Authorize(Policy = "AdminOnly")]` which requires claim `role: admin`.
+Admin-only endpoints use `[Authorize(Policy = "AdminOnly")]` which requires claim `rol: admin`.
+
+**`GetUserId()`** helper in `ReservationsController` extracts `sub` from the JWT token using `JwtRegisteredClaimNames.Sub`. Returns `Guid` or throws if the claim is missing.
 
 ---
 
@@ -73,7 +75,7 @@ Maps all exceptions to a structured JSON response:
 ```json
 {
   "error": "CAPACITY_EXCEEDED",
-  "message": "No hay suficientes entradas disponibles.",
+  "message": "Not enough tickets available.",
   "detail": "..."
 }
 ```
@@ -98,4 +100,4 @@ Maps all exceptions to a structured JSON response:
 - No direct repository or DbContext injection into controllers
 - No domain entities in controller responses — only DTOs from Application layer
 - Swagger must include JWT bearer configuration so the API is testable from the UI
-- User-facing error messages stay in Spanish; all identifiers and comments in English
+- All user-facing error messages in English; all identifiers and comments in English

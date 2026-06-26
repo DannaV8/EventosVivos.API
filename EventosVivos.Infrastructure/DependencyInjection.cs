@@ -1,5 +1,6 @@
 using EventosVivos.Application.Common.Interfaces;
 using EventosVivos.Infrastructure.Auth;
+using EventosVivos.Infrastructure.Locks;
 using EventosVivos.Infrastructure.Persistence;
 using EventosVivos.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddSingleton<JwtService>();
         services.AddSingleton<ITokenGenerator>(sp => sp.GetRequiredService<JwtService>());
+        services.AddSingleton<IEventLockProvider, EventLockProvider>();
 
         return services;
     }

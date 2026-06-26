@@ -3,6 +3,6 @@ public sealed class EventSoonException : DomainException
 {
     public EventSoonException()
         : base("EVENT_SOON",
-            "El evento comienza en menos de 1 hora.")
+            "Event starts in less than 1 hour.")
     { }
 }

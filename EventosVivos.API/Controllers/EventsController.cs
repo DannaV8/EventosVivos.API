@@ -1,6 +1,5 @@
-using EventosVivos.Application.Events.Commands.CreateEvent;
-using EventosVivos.Application.Events.Queries.ListEvents;
-using EventosVivos.Application.Reports.Queries.EventOccupancy;
+using EventosVivos.Application.Models.Events;
+using EventosVivos.Application.Models.Reports;
 using EventosVivos.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

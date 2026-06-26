@@ -1,4 +1,5 @@
-using EventosVivos.Application.Reservations.Commands.CreateReservation;
+using EventosVivos.Application.Handlers.Reservations;
+using EventosVivos.Application.Models.Reservations;
 using EventosVivos.Domain.Entities;
 using EventosVivos.Domain.Enums;
 using EventosVivos.Domain.Exceptions;
@@ -10,7 +11,7 @@ namespace EventosVivos.Application.Tests.Reservations;
 public class CreateReservationHandlerTests : HandlerTestBase
 {
     private CreateReservationHandler CreateHandler() =>
-        new(Events, Reservations, Db, Validation, NullLogger<CreateReservationHandler>.Instance);
+        new(Events, Reservations, Db, Validation, LockProvider, NullLogger<CreateReservationHandler>.Instance);
 
     private async Task<Event> PersistEventAsync(Event ev)
     {

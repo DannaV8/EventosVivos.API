@@ -9,7 +9,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 
-// Configurar Serilog antes del builder
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
@@ -25,23 +24,18 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Iniciando EventosVivos.API");
+    Log.Information("Starting EventosVivos.API");
 
     var builder = WebApplication.CreateBuilder(args);
     builder.Host.UseSerilog();
 
-    // 1. Infrastructure (DbContext, repositorios, JWT)
     builder.Services.AddInfrastructure(builder.Configuration);
-
-    // 2. Application (MediatR, FluentValidation, behaviors)
     builder.Services.AddApplication();
 
-    // 3. Auth — JWT Bearer
-    // Desactivar el renaming automático de claims (sub → ClaimTypes.NameIdentifier)
     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
     var jwtKey = builder.Configuration["Jwt:Key"]
-        ?? throw new InvalidOperationException("Jwt:Key no configurada.");
+        ?? throw new InvalidOperationException("Jwt:Key not configured.");
     var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "EventosVivos.API";
 
     builder.Services
@@ -61,16 +55,14 @@ try
         });
 
     builder.Services.AddAuthorization(opt =>
-        opt.AddPolicy("AdminOnly", p => p.RequireRole("admin")));
+        opt.AddPolicy("AdminOnly", p => p.RequireClaim("rol", "admin")));
 
-    // 4. CORS — permite que la UI (otro origen) consuma la API en desarrollo
     builder.Services.AddCors(opt =>
         opt.AddPolicy("DevCors", p => p
             .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod()));
 
-    // 5. Controllers + Swagger con JWT Bearer
     builder.Services.AddControllers()
         .AddJsonOptions(opt =>
             opt.JsonSerializerOptions.Converters.Add(
@@ -87,7 +79,7 @@ try
             Scheme       = "bearer",
             BearerFormat = "JWT",
             In           = ParameterLocation.Header,
-            Description  = "Ingrese el token JWT. Ejemplo: Bearer {token}"
+            Description  = "Enter the JWT token. Example: Bearer {token}"
         };
         c.AddSecurityDefinition("Bearer", scheme);
         c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -104,7 +96,6 @@ try
 
     var app = builder.Build();
 
-    // Pipeline — el orden importa
     app.UseMiddleware<ExceptionHandlingMiddleware>();
 
     if (app.Environment.IsDevelopment())
@@ -122,7 +113,7 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "La aplicación terminó inesperadamente");
+    Log.Fatal(ex, "Application terminated unexpectedly");
 }
 finally
 {

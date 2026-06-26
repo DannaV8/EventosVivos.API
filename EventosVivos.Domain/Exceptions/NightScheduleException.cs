@@ -5,6 +5,6 @@ public sealed class NightScheduleException : DomainException
 {
     public NightScheduleException()
         : base("NIGHT_TIME",
-            "Los eventos de fin de semana no pueden iniciar después de las 22:00.")
+            "Weekend events cannot start after 10:00 PM.")
     { }
 }

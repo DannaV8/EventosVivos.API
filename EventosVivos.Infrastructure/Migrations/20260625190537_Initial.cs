@@ -108,9 +108,9 @@ namespace EventosVivos.Infrastructure.Migrations
                 columns: new[] { "Id", "Capacity", "City", "Name" },
                 values: new object[,]
                 {
-                    { 1, 200, "Bogotá", "Auditorio Central" },
-                    { 2, 50, "Bogotá", "Sala Norte" },
-                    { 3, 500, "Medellín", "Arena Sur" }
+                    { 1, 200, "Bogotá", "Central Auditorium" },
+                    { 2, 50, "Bogotá", "North Hall" },
+                    { 3, 500, "Medellín", "South Arena" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -18,9 +18,9 @@ public sealed class AppDbContext : DbContext, IUnitOfWork
         mb.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         mb.Entity<Venue>().HasData(
-            new Venue { Id = 1, Name = "Auditorio Central", Capacity = 200, City = "Bogotá" },
-            new Venue { Id = 2, Name = "Sala Norte",        Capacity = 50,  City = "Bogotá" },
-            new Venue { Id = 3, Name = "Arena Sur",         Capacity = 500, City = "Medellín" }
+            new Venue { Id = 1, Name = "Central Auditorium", Capacity = 200, City = "Bogotá" },
+            new Venue { Id = 2, Name = "North Hall",        Capacity = 50,  City = "Bogotá" },
+            new Venue { Id = 3, Name = "South Arena",       Capacity = 500, City = "Medellín" }
         );
     }
 }

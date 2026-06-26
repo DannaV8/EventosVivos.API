@@ -13,7 +13,7 @@ public class EventTests
         var start = TestData.NextWeekday(18);
 
         var ev = Domain.Entities.Event.Create(
-            "Concierto", "Descripción suficientemente larga.",
+            "Concert", "A sufficiently long description.",
             venue, 150, start, start.AddHours(2), 80m, EventType.Concert);
 
         Assert.NotEqual(Guid.Empty, ev.Id);
@@ -31,7 +31,7 @@ public class EventTests
         var start = TestData.NextWeekday(18);
 
         var ex = Assert.Throws<InvalidEventException>(() => Domain.Entities.Event.Create(
-            title, "Descripción válida y larga.", venue, 100, start, start.AddHours(2), 50m, EventType.Workshop));
+            title, "Valid and long description.", venue, 100, start, start.AddHours(2), 50m, EventType.Workshop));
         Assert.Equal("INVALID_TITLE", ex.Code);
     }
 
@@ -43,7 +43,7 @@ public class EventTests
         var title = new string('a', 101);
 
         var ex = Assert.Throws<InvalidEventException>(() => Domain.Entities.Event.Create(
-            title, "Descripción válida y larga.", venue, 100, start, start.AddHours(2), 50m, EventType.Workshop));
+            title, "Valid and long description.", venue, 100, start, start.AddHours(2), 50m, EventType.Workshop));
         Assert.Equal("INVALID_TITLE", ex.Code);
     }
 
@@ -54,7 +54,7 @@ public class EventTests
         var start = TestData.NextWeekday(18);
 
         var ex = Assert.Throws<InvalidEventException>(() => Domain.Entities.Event.Create(
-            "Titulo válido", "corta", venue, 100, start, start.AddHours(2), 50m, EventType.Workshop));
+            "Valid title", "short", venue, 100, start, start.AddHours(2), 50m, EventType.Workshop));
         Assert.Equal("INVALID_DESCRIPTION", ex.Code);
     }
 
@@ -66,7 +66,7 @@ public class EventTests
         var start = TestData.NextWeekday(18);
 
         var ex = Assert.Throws<InvalidEventException>(() => Domain.Entities.Event.Create(
-            "Titulo válido", "Descripción válida y larga.", venue, 51, start, start.AddHours(2), 50m, EventType.Workshop));
+            "Valid title", "Valid and long description.", venue, 51, start, start.AddHours(2), 50m, EventType.Workshop));
         Assert.Equal("INVALID_CAPACITY", ex.Code);
     }
 
@@ -77,7 +77,7 @@ public class EventTests
         var start = TestData.NextWeekday(18);
 
         var ev = Domain.Entities.Event.Create(
-            "Titulo válido", "Descripción válida y larga.", venue, 50, start, start.AddHours(2), 50m, EventType.Workshop);
+            "Valid title", "Valid and long description.", venue, 50, start, start.AddHours(2), 50m, EventType.Workshop);
         Assert.Equal(50, ev.MaxCapacity);
     }
 
@@ -88,7 +88,7 @@ public class EventTests
         var start = TestData.NextWeekday(18);
 
         var ex = Assert.Throws<InvalidEventException>(() => Domain.Entities.Event.Create(
-            "Titulo válido", "Descripción válida y larga.", venue, 0, start, start.AddHours(2), 50m, EventType.Workshop));
+            "Valid title", "Valid and long description.", venue, 0, start, start.AddHours(2), 50m, EventType.Workshop));
         Assert.Equal("INVALID_CAPACITY", ex.Code);
     }
 
@@ -100,7 +100,7 @@ public class EventTests
         var past = DateTime.UtcNow.AddHours(-1);
 
         var ex = Assert.Throws<InvalidEventException>(() => Domain.Entities.Event.Create(
-            "Titulo válido", "Descripción válida y larga.", venue, 100, past, past.AddHours(2), 50m, EventType.Workshop));
+            "Valid title", "Valid and long description.", venue, 100, past, past.AddHours(2), 50m, EventType.Workshop));
         Assert.Equal("PAST_EVENT", ex.Code);
     }
 
@@ -111,7 +111,7 @@ public class EventTests
         var start = TestData.NextWeekday(18);
 
         var ex = Assert.Throws<InvalidEventException>(() => Domain.Entities.Event.Create(
-            "Titulo válido", "Descripción válida y larga.", venue, 100, start, start.AddHours(-1), 50m, EventType.Workshop));
+            "Valid title", "Valid and long description.", venue, 100, start, start.AddHours(-1), 50m, EventType.Workshop));
         Assert.Equal("INVALID_END_DATE", ex.Code);
     }
 
@@ -122,7 +122,7 @@ public class EventTests
         var start = TestData.NextSaturday(22);
 
         var ex = Assert.Throws<NightScheduleException>(() => Domain.Entities.Event.Create(
-            "Titulo válido", "Descripción válida y larga.", venue, 100, start, start.AddHours(2), 50m, EventType.Concert));
+            "Valid title", "Valid and long description.", venue, 100, start, start.AddHours(2), 50m, EventType.Concert));
         Assert.Equal("NIGHT_TIME", ex.Code);
     }
 
@@ -133,7 +133,7 @@ public class EventTests
         var start = TestData.NextSaturday(21);
 
         var ev = Domain.Entities.Event.Create(
-            "Titulo válido", "Descripción válida y larga.", venue, 100, start, start.AddHours(2), 50m, EventType.Concert);
+            "Valid title", "Valid and long description.", venue, 100, start, start.AddHours(2), 50m, EventType.Concert);
         Assert.Equal(EventStatus.Active, ev.Status);
     }
 

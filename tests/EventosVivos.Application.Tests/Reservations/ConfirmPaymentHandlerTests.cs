@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using EventosVivos.Application.Common.Exceptions;
-using EventosVivos.Application.Reservations.Commands.ConfirmPayment;
+using EventosVivos.Application.Handlers.Reservations;
+using EventosVivos.Application.Models.Reservations;
 using EventosVivos.Domain.Entities;
 using EventosVivos.Domain.Enums;
 using EventosVivos.Domain.Exceptions;

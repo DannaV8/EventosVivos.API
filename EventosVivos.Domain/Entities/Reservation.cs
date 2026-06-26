@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using EventosVivos.Domain.Enums;
 using EventosVivos.Domain.Exceptions;
 
@@ -5,6 +6,8 @@ namespace EventosVivos.Domain.Entities;
 
 public sealed class Reservation
 {
+    private static readonly Regex EmailPattern = new(
+        @"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
     public Guid Id { get; private set; }
     public Guid EventId { get; private set; }
     public Guid UserId { get; private set; }
@@ -26,23 +29,23 @@ public sealed class Reservation
     {
         if (eventId == Guid.Empty)
             throw new InvalidEventException("INVALID_EVENT",
-                "El identificador del evento es obligatorio.");
+                "Event identifier is required.");
 
         if (userId == Guid.Empty)
             throw new InvalidEventException("INVALID_USER",
-                "El identificador del usuario es obligatorio.");
+                "User identifier is required.");
 
         if (quantity < 1)
             throw new InvalidEventException("INVALID_QUANTITY",
-                "La cantidad debe ser al menos 1.");
+                "Quantity must be at least 1.");
 
         if (string.IsNullOrWhiteSpace(buyerName))
             throw new InvalidEventException("INVALID_BUYER_NAME",
-                "El nombre del comprador es obligatorio.");
+                "Buyer name is required.");
 
-        if (string.IsNullOrWhiteSpace(buyerEmail))
+        if (string.IsNullOrWhiteSpace(buyerEmail) || !EmailPattern.IsMatch(buyerEmail))
             throw new InvalidEventException("INVALID_BUYER_EMAIL",
-                "El email del comprador es obligatorio.");
+                "A valid buyer email is required.");
 
         return new Reservation
         {
@@ -59,14 +62,19 @@ public sealed class Reservation
         };
     }
 
+    private static readonly Regex CodePattern = new(@"^EV-\d{6}$", RegexOptions.Compiled);
+
     public void ConfirmPayment(string reservationCode)
     {
+        if (!CodePattern.IsMatch(reservationCode))
+            throw new InvalidReservationStateException("INVALID_CODE_FORMAT",
+                "Reservation code must match EV-{6 digits}.");
         if (Status == ReservationStatus.Confirmed)
             throw new InvalidReservationStateException("RESERVATION_ALREADY_CONFIRMED",
-                "La reserva ya está confirmada.");
+                "Reservation is already confirmed.");
         if (Status == ReservationStatus.Cancelled)
             throw new InvalidReservationStateException("RESERVATION_CANCELLED",
-                "No se puede confirmar una reserva cancelada.");
+                "Cannot confirm a cancelled reservation.");
 
         Status = ReservationStatus.Confirmed;
         ReservationCode = reservationCode;
@@ -76,10 +84,10 @@ public sealed class Reservation
     {
         if (Status == ReservationStatus.Cancelled)
             throw new InvalidReservationStateException("RESERVATION_ALREADY_CANCELLED",
-                "La reserva ya está cancelada.");
+                "Reservation is already cancelled.");
         if (Status == ReservationStatus.PendingPayment)
             throw new InvalidReservationStateException("INVALID_STATE",
-                "No se puede cancelar una reserva pendiente de pago.");
+                "Cannot cancel a pending payment reservation.");
 
         IsLost = DateTime.UtcNow > eventStart.AddHours(-48);
         Status = ReservationStatus.Cancelled;

@@ -1,4 +1,5 @@
 using EventosVivos.Domain.Services;
+using EventosVivos.Infrastructure.Locks;
 using EventosVivos.Infrastructure.Persistence;
 using EventosVivos.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ public abstract class HandlerTestBase : IDisposable
     protected ReservationRepository Reservations { get; }
     protected VenueRepository Venues { get; }
     protected ReservationValidationService Validation { get; } = new();
+    protected EventLockProvider LockProvider { get; } = new();
 
     protected HandlerTestBase()
     {
@@ -26,5 +28,9 @@ public abstract class HandlerTestBase : IDisposable
         Venues = new VenueRepository(Db);
     }
 
-    public void Dispose() => Db.Dispose();
+    public void Dispose()
+    {
+        Db.Dispose();
+        LockProvider.Dispose();
+    }
 }

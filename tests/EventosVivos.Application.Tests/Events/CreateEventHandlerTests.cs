@@ -1,5 +1,6 @@
 using EventosVivos.Application.Common.Exceptions;
-using EventosVivos.Application.Events.Commands.CreateEvent;
+using EventosVivos.Application.Handlers.Events;
+using EventosVivos.Application.Models.Events;
 using EventosVivos.Domain.Enums;
 using EventosVivos.Domain.Exceptions;
 using Microsoft.EntityFrameworkCore;

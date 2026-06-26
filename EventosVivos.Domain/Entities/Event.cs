@@ -35,23 +35,27 @@ public sealed class Event
 
         if (string.IsNullOrWhiteSpace(title) || title.Length < 5 || title.Length > 100)
             throw new InvalidEventException("INVALID_TITLE",
-                "El título debe tener entre 5 y 100 caracteres.");
+                "Title must be between 5 and 100 characters.");
 
         if (string.IsNullOrWhiteSpace(description) || description.Length < 10 || description.Length > 500)
             throw new InvalidEventException("INVALID_DESCRIPTION",
-                "La descripción debe tener entre 10 y 500 caracteres.");
+                "Description must be between 10 and 500 characters.");
 
         if (maximumCapacity < 1 || maximumCapacity > venue.Capacity)
             throw new InvalidEventException("INVALID_CAPACITY",
-                $"La capacidad debe estar entre 1 y {venue.Capacity} (capacidad del venue).");
+                $"Capacity must be between 1 and {venue.Capacity} (venue capacity).");
 
         if (start <= DateTime.UtcNow)
             throw new InvalidEventException("PAST_EVENT",
-                "La fecha de inicio debe ser futura.");
+                "Start date must be in the future.");
 
         if (end <= start)
             throw new InvalidEventException("INVALID_END_DATE",
-                "La fecha de fin debe ser posterior al inicio.");
+                "End date must be after start date.");
+
+        if (price < 0)
+            throw new InvalidEventException("INVALID_PRICE",
+                "Price must be non-negative.");
 
         var isWeekend = start.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
         if (isWeekend && start.Hour >= 22)

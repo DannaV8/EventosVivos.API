@@ -13,7 +13,7 @@ public sealed class ReservationCapacitySpec
             return (
                 false,
                 "CAPACITY_EXCEEDED",
-                $"No hay suficientes entradas. Solicitadas: {quantity}, Disponibles: {available}");
+                $"Not enough tickets. Requested: {quantity}, Available: {available}");
 
         return (true, null, null);
     }

@@ -33,6 +33,10 @@ Before touching any file, identify which layer it belongs to and read that layer
 EventosVivos/
 ├── CLAUDE.md                              ← you are here
 ├── EventosVivos.slnx
+├── Directory.Build.props                  ← shared build properties
+├── Directory.Packages.props               ← central NuGet package versions
+├── .editorconfig                          ← code style rules
+├── docs/                                  ← design docs (not implemented)
 ├── EventosVivos.Domain/
 ├── EventosVivos.Application/
 ├── EventosVivos.Infrastructure/
@@ -41,6 +45,20 @@ EventosVivos/
     ├── EventosVivos.Domain.Tests/
     └── EventosVivos.Application.Tests/
 ```
+
+---
+
+## Build infrastructure
+
+| File | Purpose |
+|---|---|
+| `Directory.Build.props` | `TargetFramework`, `Nullable`, `ImplicitUsings`, `AnalysisLevel`, `TreatWarningsAsErrors` across all projects |
+| `Directory.Packages.props` | All NuGet package versions pinned here — projects use `PackageReference` without `Version` |
+| `.editorconfig` | Code style rules enforced by IDE and dotnet format |
+
+**Never put a `Version` attribute on a `PackageReference` in a `.csproj`** — versions live only in `Directory.Packages.props`.
+
+**Never duplicate build properties** like `TargetFramework` or `Nullable` in individual `.csproj` — they belong in `Directory.Build.props`.
 
 ---
 
@@ -105,7 +123,7 @@ If cancelling a confirmed reservation within 48h of event start:
 - FluentValidation runs before handlers — invalid input never reaches a handler.
 - Repositories return domain entities, not EF models or DTOs.
 - No business logic in controllers.
-- User-facing messages (API error responses, validation messages) stay in Spanish.
+- All user-facing messages (API error responses, validation messages) in English.
 - All code identifiers, comments, and error codes in English.
 
 ---

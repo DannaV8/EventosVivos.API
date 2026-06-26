@@ -44,13 +44,13 @@ public sealed class ExceptionHandlingMiddleware
                 (404, "NOT_FOUND", nfe.Message, (object?)null),
 
             ValidationException ve =>
-                (400, "VALIDATION_ERROR", "La solicitud contiene errores de validación.",
+                (400, "VALIDATION_ERROR", "The request contains validation errors.",
                  ve.Errors
                    .GroupBy(e => e.PropertyName)
                    .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray())),
 
             CapacityExceededException cee =>
-                (409, cee.Code, "No hay suficientes entradas disponibles.", (object?)cee.Message),
+                (409, cee.Code, "Not enough tickets available.", (object?)cee.Message),
 
             VenueConflictException vce =>
                 (409, vce.Code, vce.Message, null),
@@ -69,19 +69,18 @@ public sealed class ExceptionHandlingMiddleware
 
             DbUpdateConcurrencyException =>
                 (409, "CONCURRENCY_CONFLICT",
-                 "El recurso fue modificado por otra operación. Intente nuevamente.", null),
+                 "The resource was modified by another operation. Please try again.", null),
 
             _ =>
-                (500, "INTERNAL_ERROR", "Error interno del servidor.",
+                (500, "INTERNAL_ERROR", "Internal server error.",
                  _env.IsDevelopment() ? (object?)ex.ToString() : null)
         };
 
-        // Loguear con nivel apropiado según la gravedad
         if (status >= 500)
-            _logger.LogError(ex, "Error {Status} [{Code}] en {Method} {Path}",
+            _logger.LogError(ex, "Error {Status} [{Code}] at {Method} {Path}",
                 status, error, context.Request.Method, context.Request.Path);
         else if (status >= 400)
-            _logger.LogWarning("Error {Status} [{Code}] en {Method} {Path}: {Message}",
+            _logger.LogWarning("Error {Status} [{Code}] at {Method} {Path}: {Message}",
                 status, error, context.Request.Method, context.Request.Path, message);
 
         context.Response.StatusCode = status;

@@ -1,5 +1,4 @@
-using EventosVivos.Application.Auth.Commands.Login;
-using EventosVivos.Application.Auth.Commands.RegisterUser;
+using EventosVivos.Application.Models.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
