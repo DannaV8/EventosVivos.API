@@ -1,5 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Text.Json;
+using System.Threading.RateLimiting;
 using EventosVivos.API.Middleware;
 using EventosVivos.Application;
 using EventosVivos.Infrastructure;
@@ -63,6 +65,59 @@ try
             .AllowAnyHeader()
             .AllowAnyMethod()));
 
+    var globalLimit  = builder.Configuration.GetValue("RateLimiting:Global:PermitLimit", 100);
+    var globalWindow = builder.Configuration.GetValue("RateLimiting:Global:WindowSeconds", 60);
+    var authLimit    = builder.Configuration.GetValue("RateLimiting:Auth:PermitLimit", 5);
+    var authWindow   = builder.Configuration.GetValue("RateLimiting:Auth:WindowSeconds", 60);
+
+    builder.Services.AddRateLimiter(opt =>
+    {
+        opt.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+        // Global limit: per client IP (values from RateLimiting:Global).
+        opt.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(http =>
+        {
+            var ip = http.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            return RateLimitPartition.GetFixedWindowLimiter(ip, _ =>
+                new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = globalLimit,
+                    Window      = TimeSpan.FromSeconds(globalWindow),
+                    QueueLimit  = 0
+                });
+        });
+
+        // Stricter limit for auth endpoints, per IP (values from RateLimiting:Auth).
+        opt.AddPolicy("auth", http =>
+        {
+            var ip = http.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            return RateLimitPartition.GetFixedWindowLimiter($"auth-{ip}", _ =>
+                new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = authLimit,
+                    Window      = TimeSpan.FromSeconds(authWindow),
+                    QueueLimit  = 0
+                });
+        });
+
+        // Same JSON error shape as ExceptionHandlingMiddleware.
+        opt.OnRejected = async (ctx, token) =>
+        {
+            ctx.HttpContext.Response.ContentType = "application/json";
+
+            if (ctx.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+                ctx.HttpContext.Response.Headers.RetryAfter =
+                    ((int)retryAfter.TotalSeconds).ToString();
+
+            var json = JsonSerializer.Serialize(new
+            {
+                error   = "RATE_LIMIT_EXCEEDED",
+                message = "Too many requests. Please try again later."
+            });
+            await ctx.HttpContext.Response.WriteAsync(json, token);
+        };
+    });
+
     builder.Services.AddControllers()
         .AddJsonOptions(opt =>
             opt.JsonSerializerOptions.Converters.Add(
@@ -105,6 +160,7 @@ try
     }
 
     app.UseCors("DevCors");
+    app.UseRateLimiter();
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();

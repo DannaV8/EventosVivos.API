@@ -45,6 +45,14 @@ public sealed class EventsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id:guid}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetEventByIdQuery(id), ct);
+        return Ok(result);
+    }
+
     [HttpGet("{id:guid}/report")]
     public async Task<IActionResult> Report(Guid id, CancellationToken ct)
     {

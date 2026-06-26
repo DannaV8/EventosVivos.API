@@ -35,6 +35,7 @@ EventosVivos.Application/
 │   │   └── RegisterUserHandler.cs
 │   ├── Events/
 │   │   ├── CreateEventHandler.cs
+│   │   ├── GetEventByIdHandler.cs
 │   │   └── ListEventsHandler.cs
 │   ├── Reports/
 │   │   └── EventOccupancyHandler.cs
@@ -53,6 +54,7 @@ EventosVivos.Application/
 │   │   ├── CreateEventCommand.cs
 │   │   ├── CreateEventValidator.cs
 │   │   ├── EventDto.cs
+│   │   ├── GetEventByIdQuery.cs
 │   │   └── ListEventsQuery.cs
 │   ├── Reports/
 │   │   ├── EventOccupancyDto.cs
