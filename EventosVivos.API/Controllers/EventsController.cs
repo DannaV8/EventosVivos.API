@@ -35,7 +35,11 @@ public sealed class EventsController : ControllerBase
         [FromQuery] string? title,
         CancellationToken ct)
     {
-        var query = new ListEventsQuery(type, startDate, endDate, venueId, status, title);
+        var query = new ListEventsQuery(
+            type,
+            startDate.HasValue ? DateTime.SpecifyKind(startDate.Value, DateTimeKind.Utc) : null,
+            endDate.HasValue   ? DateTime.SpecifyKind(endDate.Value,   DateTimeKind.Utc) : null,
+            venueId, status, title);
         var result = await _mediator.Send(query, ct);
         return Ok(result);
     }
