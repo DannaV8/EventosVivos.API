@@ -1,3 +1,7 @@
+URL: https://eventosvivos-api-q5jw.onrender.com/swagger/index.html
+
+<img width="751" height="468" alt="image" src="https://github.com/user-attachments/assets/b96d005b-ba55-4dec-9110-90dc71ce7fd5" />
+
 # EventosVivos API
 
 API REST para reserva de eventos culturales. El núcleo del problema es el **control de aforo
@@ -105,3 +109,16 @@ dotnet test
   "Jwt": { "Key": "<256-bit-secret>", "Issuer": "EventosVivos.API", "ExpiresInMinutes": 60 }
 }
 ```
+##Diagramas
+- **ER:**
+<img width="805" height="332" alt="Eventos vivos-ER drawio" src="https://github.com/user-attachments/assets/f5cd1ea8-6a79-43ff-920a-90a730108870" />
+
+- **Arquitectura:**
+<img width="698" height="1817" alt="Eventos vivos-Architecture drawio (1)" src="https://github.com/user-attachments/assets/fc187f7b-2d75-473b-816d-cf6a2c7313c6" />
+
+- **Diagrama de usuario:**
+<img width="623" height="641" alt="Eventos vivos-User Diagram drawio" src="https://github.com/user-attachments/assets/3aa7f1c7-2924-4640-9a7f-d101ddd01b71" />
+
+## Unit test
+<img width="458" height="406" alt="image" src="https://github.com/user-attachments/assets/61b5d3ed-dfd4-47e7-88cd-ec433f5b1ef0" />
+
