@@ -57,7 +57,7 @@ try
         });
 
     builder.Services.AddAuthorization(opt =>
-        opt.AddPolicy("AdminOnly", p => p.RequireClaim("role", "admin")));
+        opt.AddPolicy("AdminOnly", p => p.RequireRole("admin")));
 
     builder.Services.AddCors(opt =>
         opt.AddPolicy("DevCors", p => p

@@ -11,5 +11,7 @@ public sealed record EventDto(
     DateTime EndDateTime,
     decimal TicketPrice,
     string Type,
-    string Status
+    string Status,
+    int ConfirmedTickets,
+    int LostTickets
 );

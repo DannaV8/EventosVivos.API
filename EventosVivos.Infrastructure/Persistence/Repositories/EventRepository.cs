@@ -1,5 +1,6 @@
 using EventosVivos.Application.Common.Interfaces;
 using EventosVivos.Application.Common.Models;
+using EventosVivos.Application.Models.Reports;
 using EventosVivos.Domain.Entities;
 using EventosVivos.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -85,4 +86,50 @@ public sealed class EventRepository : IEventRepository
 
     public async Task AddAsync(Event ev, CancellationToken ct = default) =>
         await _db.Events.AddAsync(ev, ct);
+
+    public async Task<IReadOnlyList<EventOccupancyDto>> ListOccupanciesAsync(CancellationToken ct = default)
+    {
+        var now = DateTime.UtcNow;
+
+        var rows = await _db.Events
+            .Select(e => new
+            {
+                e.Id,
+                e.Title,
+                e.MaxCapacity,
+                e.TicketPrice,
+                e.EndDateTime,
+                IsCancelled = EF.Property<bool>(e, "_cancelled"),
+                Confirmed = _db.Reservations
+                    .Where(r => r.EventId == e.Id &&
+                        (r.Status == ReservationStatus.Confirmed ||
+                         r.Status == ReservationStatus.PendingPayment))
+                    .Sum(r => (int?)r.Quantity) ?? 0,
+                Lost = _db.Reservations
+                    .Where(r => r.EventId == e.Id && r.IsLost)
+                    .Sum(r => (int?)r.Quantity) ?? 0,
+            })
+            .ToListAsync(ct);
+
+        return rows.Select(e =>
+        {
+            var status = e.IsCancelled ? EventStatus.Cancelled
+                : now > e.EndDateTime  ? EventStatus.Completed
+                : EventStatus.Active;
+
+            var available  = e.MaxCapacity - e.Confirmed - e.Lost;
+            var percentage = e.MaxCapacity > 0
+                ? Math.Round((double)e.Confirmed / e.MaxCapacity * 100, 2)
+                : 0;
+
+            return new EventOccupancyDto(
+                e.Id,
+                e.Title,
+                SoldTickets: e.Confirmed,
+                AvailableTickets: available,
+                OccupancyPercentage: percentage,
+                TotalRevenue: e.Confirmed * e.TicketPrice,
+                Status: status.ToString());
+        }).ToList();
+    }
 }

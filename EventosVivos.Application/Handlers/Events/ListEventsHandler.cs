@@ -9,8 +9,13 @@ public sealed class ListEventsHandler
     : IRequestHandler<ListEventsQuery, PagedResult<EventDto>>
 {
     private readonly IEventRepository _events;
+    private readonly IReservationRepository _reservations;
 
-    public ListEventsHandler(IEventRepository events) => _events = events;
+    public ListEventsHandler(IEventRepository events, IReservationRepository reservations)
+    {
+        _events = events;
+        _reservations = reservations;
+    }
 
     public async Task<PagedResult<EventDto>> Handle(
         ListEventsQuery query, CancellationToken ct)
@@ -27,8 +32,12 @@ public sealed class ListEventsHandler
 
         var result = await _events.ListAsync(filter, ct);
 
-        var items = result.Items
-            .Select(e => new EventDto(
+        var items = new List<EventDto>();
+        foreach (var e in result.Items)
+        {
+            var confirmed = await _reservations.CountConfirmedAsync(e.Id, ct);
+            var lost = await _reservations.CountLostAsync(e.Id, ct);
+            items.Add(new EventDto(
                 e.Id,
                 e.Title,
                 e.Description,
@@ -39,8 +48,10 @@ public sealed class ListEventsHandler
                 e.EndDateTime,
                 e.TicketPrice,
                 e.Type.ToString(),
-                e.Status.ToString()))
-            .ToList();
+                e.Status.ToString(),
+                ConfirmedTickets: confirmed,
+                LostTickets: lost));
+        }
 
         return new PagedResult<EventDto>(items, result.TotalCount, result.Page, result.PageSize);
     }

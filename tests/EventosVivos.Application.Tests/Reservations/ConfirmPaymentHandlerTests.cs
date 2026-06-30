@@ -12,7 +12,7 @@ namespace EventosVivos.Application.Tests.Reservations;
 public class ConfirmPaymentHandlerTests : HandlerTestBase
 {
     private ConfirmPaymentHandler CreateHandler() =>
-        new(Reservations, Db, NullLogger<ConfirmPaymentHandler>.Instance);
+        new(Reservations, Events, Db, NullLogger<ConfirmPaymentHandler>.Instance);
 
     private async Task<Reservation> PersistReservationAsync(Reservation reservation)
     {

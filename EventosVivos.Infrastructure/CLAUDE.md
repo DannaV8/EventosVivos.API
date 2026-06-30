@@ -51,9 +51,9 @@ Never remove this — it's the only thing preventing overselling under concurren
 
 **Venues are seeded reference data** in `AppDbContext.OnModelCreating` — they are never created from user actions.
 
-**JWT claims**: `sub` (userId via `JwtRegisteredClaimNames.Sub`), `email` (via `JwtRegisteredClaimNames.Email`), `jti` (via `JwtRegisteredClaimNames.Jti`), `rol` (`admin` | `user` — **string literal `"rol"`**, not `ClaimTypes.Role`). The role claim name must match the controller's `HasClaim("rol", "admin")` checks and `RequireClaim("rol", "admin")` policy in `Program.cs`.
+**JWT claims**: `sub` (userId via `JwtRegisteredClaimNames.Sub`), `email` (via `JwtRegisteredClaimNames.Email`), `jti` (via `JwtRegisteredClaimNames.Jti`), `role` (`admin` | `user`). The token emits `"role"` but ASP.NET remaps it internally to `ClaimTypes.Role` regardless of `DefaultInboundClaimTypeMap.Clear()`. The `AdminOnly` policy uses `RequireRole("admin")` (not `RequireClaim`) to match the remapped type correctly.
 
-Read by `JwtService` from `IConfiguration` keys `Jwt:Key`, `Jwt:Issuer`, `Jwt:ExpiresInMinutes`. Configuration uses `DefaultInboundClaimTypeMap.Clear()` so JWT claim names are not remapped by the framework.
+Read by `JwtService` from `IConfiguration` keys `Jwt:Key`, `Jwt:Issuer`, `Jwt:ExpiresInMinutes`.
 
 **EventLockProvider** (`IEventLockProvider`) — singleton `ConcurrentDictionary<Guid, SemaphoreSlim>` that serializes concurrent requests per `EventId`. Used by `CreateReservationHandler` to prevent overselling under concurrent load. `await using` pattern ensures the semaphore is released even on exception. Does NOT protect across multiple API instances (single-instance only).
 

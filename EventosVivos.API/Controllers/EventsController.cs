@@ -59,4 +59,12 @@ public sealed class EventsController : ControllerBase
         var result = await _mediator.Send(new EventOccupancyQuery(id), ct);
         return Ok(result);
     }
+
+    [HttpGet("reports")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<IActionResult> Reports(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new ListEventOccupanciesQuery(), ct);
+        return Ok(result);
+    }
 }

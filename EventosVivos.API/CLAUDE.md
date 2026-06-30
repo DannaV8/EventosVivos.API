@@ -67,7 +67,7 @@ PUT   /api/reservations/{id}/cancel        → CancelReservationCommand   → 20
 ## Auth
 
 All endpoints require JWT Bearer except `GET /api/events` (public).
-Admin-only endpoints use `[Authorize(Policy = "AdminOnly")]` which requires claim `role: admin`.
+Admin-only endpoints use `[Authorize(Policy = "AdminOnly")]` which uses `RequireRole("admin")` — maps to `ClaimTypes.Role` (`http://schemas.microsoft.com/ws/2008/06/identity/claims/role`). The JWT middleware remaps the `role` claim to this long URI despite `DefaultInboundClaimTypeMap.Clear()`.
 
 **`GetUserId()`** helper in `ReservationsController` extracts `sub` from the JWT token using `JwtRegisteredClaimNames.Sub`. Returns `Guid` or throws if the claim is missing.
 

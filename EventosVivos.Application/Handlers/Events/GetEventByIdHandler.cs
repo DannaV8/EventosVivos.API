@@ -9,13 +9,21 @@ public sealed class GetEventByIdHandler
     : IRequestHandler<GetEventByIdQuery, EventDto>
 {
     private readonly IEventRepository _events;
+    private readonly IReservationRepository _reservations;
 
-    public GetEventByIdHandler(IEventRepository events) => _events = events;
+    public GetEventByIdHandler(IEventRepository events, IReservationRepository reservations)
+    {
+        _events = events;
+        _reservations = reservations;
+    }
 
     public async Task<EventDto> Handle(GetEventByIdQuery query, CancellationToken ct)
     {
         var ev = await _events.GetByIdAsync(query.Id, ct)
             ?? throw new NotFoundException($"Event {query.Id} not found.");
+
+        var confirmed = await _reservations.CountConfirmedAsync(ev.Id, ct);
+        var lost = await _reservations.CountLostAsync(ev.Id, ct);
 
         return new EventDto(
             ev.Id,
@@ -28,6 +36,8 @@ public sealed class GetEventByIdHandler
             ev.EndDateTime,
             ev.TicketPrice,
             ev.Type.ToString(),
-            ev.Status.ToString());
+            ev.Status.ToString(),
+            ConfirmedTickets: confirmed,
+            LostTickets: lost);
     }
 }
